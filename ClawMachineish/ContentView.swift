@@ -80,6 +80,12 @@ struct ContentView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 75, height: 75)
+                        .shadow(color: up ? .clear: .white, radius: 3, x: 1, y:3)
+                        .foregroundColor(up ? .yellow : .black)
+                        .animation(Animation.linear, value: up)
+                        .gesture(DragGesture(minimumDistance: 0.0)
+                            .updating($up, body: { value, state, transaction in
+                                state = true }))
                     
                     Spacer()
                     
@@ -87,10 +93,40 @@ struct ContentView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 75, height: 75)
+                        .shadow(color: down ? .clear: .white, radius: 3, x: 1, y:3)
+                        .foregroundColor(down ? .yellow : .black)
+                        .animation(Animation.linear, value: down)
+                        .gesture(DragGesture(minimumDistance: 0.0)
+                            .updating($down, body: { value, state, transaction in
+                                state = true }))
+                    
                 }
                 .frame(width: 200, height: 50)
                 // gesturestate = used to track temporary changes during user interaction such as dragging or tapping, and updating the view accordingly
             }
+        }
+        .onReceive(timer) { time in
+            if up {
+                moveUp()
+            }
+            if down {
+                moveDown()
+            }
+        }
+    }
+    
+    func moveUp() {
+        if length > 100 {
+            rotationAngle = up ? rotationAngle + (3.45) : rotationAngle
+            length = up ? length - 3 : length
+            outerLineStart = up ? outerLineStart + 0.009 : outerLineStart
+        }
+    }
+    func moveDown() {
+        if length < 500 {
+            rotationAngle = down ? rotationAngle - (3.45) : rotationAngle
+            length = down ? length + 3 : length
+            outerLineStart = down ? outerLineStart - 0.009 : outerLineStart
         }
     }
 }
